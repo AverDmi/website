@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -25,29 +26,36 @@ public class LoginController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(Model model) {
+        model.addAttribute("title", "Login");
         return "login";
+    }
+
+    @RequestMapping("/index")
+    public String home(Model model) {
+        model.addAttribute("title", "Home Page");
+        return "index";
     }
 
     @GetMapping("/register")
     public String register(Model model) {
+        model.addAttribute("title", "Register");
         model.addAttribute("adminDto", new AdminDto());
         return "register";
     }
 
     @GetMapping("/forgot-password")
     public String forgotPassword(Model model) {
+        model.addAttribute("title", "Forgot Password");
         return "forgot-password";
     }
 
     @PostMapping("/register-new")
     public String addNewAdmin(@Valid @ModelAttribute("adminDto") AdminDto adminDto,
                               BindingResult result,
-                              Model model,
-                              HttpSession session) {
+                              Model model) {
 
         try {
-            session.removeAttribute("message");
             if (result.hasErrors()) {
                 model.addAttribute("adminDto", adminDto);
                 result.toString();
@@ -58,24 +66,24 @@ public class LoginController {
             if (admin != null) {
                 model.addAttribute("adminDto", adminDto);
                 System.out.println("admin not null");
-                session.setAttribute("message", "Your email has been registered!");
+                model.addAttribute("emailError", "Your email has been registered!");
                 return "register";
             }
             if(adminDto.getPassword().equals(adminDto.getRepeatPassword())) {
                 adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
                 adminService.save(adminDto);
                 System.out.println("success");
-                session.setAttribute("message", "Register successfully");
+                model.addAttribute("success", "Register successfully!");
                 model.addAttribute("adminDto", adminDto);
             } else {
                 model.addAttribute("adminDto", adminDto);
-                session.setAttribute("message", "Password is not same!");
+                model.addAttribute("passwordError", "Your password maybe wrong! Check again!");
                 System.out.println("password not same");
                 return "register";
             }
         }catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("message", "Server is error, please try again later!");
+            model.addAttribute("errors", "The server has been wrong!");
         }
         return "register";
     }
