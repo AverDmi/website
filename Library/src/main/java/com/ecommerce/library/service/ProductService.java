@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ProductService {
+
+    /*Admin*/
     List<ProductDto> findAll();
     Product save(MultipartFile imageProduct, ProductDto productDto);
     Product update(MultipartFile imageProduct, ProductDto productDto);
@@ -18,4 +20,10 @@ public interface ProductService {
     Page<ProductDto> pageProducts(int pageNo);
 
     Page<ProductDto> searchProducts(int pageNo, String keyword);
+
+    /*Customer*/
+
+    List<Product> getAllProducts();
+
+    List<Product> listViewProducts();
 }
