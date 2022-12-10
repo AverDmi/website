@@ -43,7 +43,15 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String index(Model model) {
+    public String index(Model model, Principal principal, HttpSession session) {
+        if(principal != null) {
+            session.setAttribute("username", principal.getName());
+            Customer customer = customerService.findByUsername(principal.getName());
+            ShoppingCart cart = customer.getShoppingCart();
+            session.setAttribute("totalItems", cart.getTotalItems());
+        } else {
+            session.removeAttribute("username");
+        }
         List<Category> categories = categoryService.findAll();
         List<ProductDto> productDtos = productService.findAll();
         model.addAttribute("categories", categories);

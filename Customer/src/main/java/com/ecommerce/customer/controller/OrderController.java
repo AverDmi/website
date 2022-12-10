@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.List;
 
@@ -46,15 +47,17 @@ public class OrderController {
     }
 
     @GetMapping("/order")
-    public String order(Principal principal, Model model) {
+    public String order(Principal principal, Model model, HttpSession session) {
         if(principal == null) {
             return "redirect:/login";
         }
 
         String username = principal.getName();
         Customer customer = customerService.findByUsername(username);
+        ShoppingCart cart = customer.getShoppingCart();
         List<Order> orderList = customer.getOrders();
         model.addAttribute("orders", orderList);
+        session.setAttribute("totalItems", cart.getTotalItems());
         return "order";
     }
 

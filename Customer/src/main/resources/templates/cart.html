@@ -58,7 +58,7 @@
                         <tr th:each="cartItem : ${shoppingCart.cartItem}">
                             <td class="thumbnail-img">
                                 <a href="#">
-                                    <img class="img-fluid"
+                                    <img class="img-fluid-cart"
                                          th:src="*{'data:image/jpeg;base64,' + cartItem.product.image}" alt=""/>
                                 </a>
                             </td>

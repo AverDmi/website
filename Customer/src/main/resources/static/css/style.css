@@ -1091,16 +1091,19 @@ button[disabled] {
  .products-single {
      overflow: hidden;
      position: relative;
+     height: 400px;
      margin-bottom: 30px;
 }
  .products-single .box-img-hover{
      overflow: hidden;
      position: relative;
+     height: 300px;
 }
  .box-img-hover img{
      margin: 0 auto;
      text-align: center;
      display: block;
+     background-size: contain;
 }
  .type-lb{
      position: absolute;
