@@ -2,8 +2,11 @@ package com.ecommerce.customer.controller;
 
 import com.ecommerce.library.dto.CategoryDto;
 import com.ecommerce.library.model.Category;
+import com.ecommerce.library.model.Customer;
 import com.ecommerce.library.model.Product;
+import com.ecommerce.library.model.ShoppingCart;
 import com.ecommerce.library.service.CategoryService;
+import com.ecommerce.library.service.CustomerService;
 import com.ecommerce.library.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -22,8 +27,19 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private CustomerService customerService;
+
     @GetMapping("/products")
-    public String products(Model model) {
+    public String products(Model model, Principal principal, HttpSession session) {
+        if(principal != null) {
+            session.setAttribute("username", principal.getName());
+            Customer customer = customerService.findByUsername(principal.getName());
+            ShoppingCart cart = customer.getShoppingCart();
+            session.setAttribute("totalItems", cart.getTotalItems());
+        } else {
+            session.removeAttribute("username");
+        }
         List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
         List<Product> products = productService.getAllProducts();
         List<Product> listViewProducts = productService.listViewProducts();
@@ -34,7 +50,16 @@ public class ProductController {
     }
 
     @GetMapping("/find-product/{id}")
-    public String findProductById(@PathVariable("id") Long id, Model model) {
+    public String findProductById(@PathVariable("id") Long id, Model model, HttpSession session, Principal principal) {
+        if(principal != null) {
+            session.setAttribute("username", principal.getName());
+            Customer customer = customerService.findByUsername(principal.getName());
+            ShoppingCart cart = customer.getShoppingCart();
+            session.setAttribute("totalItems", cart.getTotalItems());
+        } else {
+            session.removeAttribute("username");
+        }
+
         Product product = productService.getProductById(id);
         Long categoryId = product.getCategory().getId();
         List<Product> products = productService.getRelatedProducts(categoryId);
@@ -44,7 +69,16 @@ public class ProductController {
     }
 
     @GetMapping("/products-in-category/{id}")
-    public String getProductsInCategory(@PathVariable("id") Long categoryId ,Model model){
+    public String getProductsInCategory(@PathVariable("id") Long categoryId ,Model model, Principal principal, HttpSession session){
+        if(principal != null) {
+            session.setAttribute("username", principal.getName());
+            Customer customer = customerService.findByUsername(principal.getName());
+            ShoppingCart cart = customer.getShoppingCart();
+            session.setAttribute("totalItems", cart.getTotalItems());
+        } else {
+            session.removeAttribute("username");
+        }
+
         Category category = categoryService.findById(categoryId);
         List<CategoryDto> categories = categoryService.getCategoryAndProduct();
         List<Product> products = productService.getProductsInCategory(categoryId);
@@ -55,7 +89,15 @@ public class ProductController {
     }
 
     @GetMapping("/high-price")
-    public String filterHighPrice(Model model) {
+    public String filterHighPrice(Model model, Principal principal, HttpSession session) {
+        if(principal != null) {
+            session.setAttribute("username", principal.getName());
+            Customer customer = customerService.findByUsername(principal.getName());
+            ShoppingCart cart = customer.getShoppingCart();
+            session.setAttribute("totalItems", cart.getTotalItems());
+        } else {
+            session.removeAttribute("username");
+        }
         List<Category> categories = categoryService.findAllByActivated();
         List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
         List<Product> products = productService.filterHighPrice();
@@ -66,7 +108,15 @@ public class ProductController {
     }
 
     @GetMapping("/low-price")
-    public String filterLowPrice(Model model) {
+    public String filterLowPrice(Model model, Principal principal, HttpSession session) {
+        if(principal != null) {
+            session.setAttribute("username", principal.getName());
+            Customer customer = customerService.findByUsername(principal.getName());
+            ShoppingCart cart = customer.getShoppingCart();
+            session.setAttribute("totalItems", cart.getTotalItems());
+        } else {
+            session.removeAttribute("username");
+        }
         List<Category> categories = categoryService.findAllByActivated();
         List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
         List<Product> products = productService.filterLowPrice();

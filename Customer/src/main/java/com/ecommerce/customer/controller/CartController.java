@@ -94,6 +94,5 @@ public class CartController {
             model.addAttribute("shoppingCart", cart);
             return "redirect:/cart";
         }
-
     }
 }
